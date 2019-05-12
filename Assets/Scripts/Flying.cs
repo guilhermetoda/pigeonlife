@@ -7,70 +7,138 @@ public class Flying : MonoBehaviour
 {
     private Rigidbody _rb;
     
-    private float _flyForce = 10f;
+    [SerializeField] private float _flyForce = 10f;
     private float _flyForwardForce = 10f;
 
     private float _xInput = 0f; // X-Axis Input 
     private float _yInput = 0f; // Y-Axis Input 
 
-    private float _flySpeed = 1f;
+    private float _flySpeed = 0.5f;
 
     private bool _flyPressed = false;
     private bool _flyHold = false;
 
+    private bool _gliding = false;
+
     [SerializeField] private Camera _birdCamera;
+
+    [Header("Camera")]
+    [SerializeField] private Transform _camPivot;
+    private Transform _camTransform;
+
+    private float _CurrentAngle = 0f;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _camTransform = _camPivot.GetComponentInChildren<Camera>().transform;
+    }
+
+    private void FixedUpdate()
+    {
+        FlyingPhysics();
     }
 
     private void Update()
     {
+        ReadInputs();
+        UpdateRotations();
+    }
+
+    // Update Camera Rotation
+    private void UpdateRotations()
+    {
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+        
+        transform.Rotate(0f, mouseX, 0f);
+
+        // increase the angle using the Input from the Mouse
+        _CurrentAngle += mouseY;
+        // Checks if the angle is between 90f and -90f
+        if (_CurrentAngle < 90f && _CurrentAngle > -90f) 
+        {
+            // Rotates only with the Angle is inside of the allowed range.
+            _camPivot.Rotate(-mouseY, 0, 0);
+        }
+        else 
+        {
+            // if the angle is higher or lower, clamp the angle!
+            _CurrentAngle = Mathf.Clamp(_CurrentAngle, -90f, 90f);
+        }
+
+    }
+
+    private void ReadInputs()
+    {
         _xInput = Input.GetAxis("Vertical");
         _yInput = Input.GetAxis("Horizontal");
 
-        if (Input.GetKeyDown(KeyCode.Space)) 
+         if (Input.GetButtonDown("Jump")) 
         {
            _flyPressed = true;
         }
 
-        if (Input.GetKeyUp(KeyCode.Space)) 
+        if (Input.GetButtonUp("Jump")) 
         {
            _flyPressed = false;
            _flyHold = false;
         }
 
-        if (Input.GetKey(KeyCode.Space)) 
+        if (Input.GetButton("Jump")) 
         {
             _flyHold = true;
         }
 
+        if (Input.GetKey(KeyCode.G))
+        {
+            _gliding = true;
+        }
 
+        if (Input.GetKeyUp(KeyCode.G)) 
+        {
+            _gliding = false;
+        }
     }
 
-    private void FixedUpdate()
+
+    private void FlyingPhysics() 
     {
         if (_flyPressed) 
         {   
-            _rb.AddForce(Vector3.up * 15f);
+            _rb.AddForce(Vector3.up * _flyForce, ForceMode.Impulse);
             /* var newVelocity = new Vector3(0f , 0f, 1f).normalized * _flySpeed;
             newVelocity = transform.TransformVector(newVelocity);
             _rb.velocity = newVelocity;*/
+            
         }
         else if (_flyHold) 
         {   
-            _rb.AddForce(Vector3.up * 5f);
+            _rb.AddForce(Vector3.up * 2f, ForceMode.Acceleration);
+            //_rb.AddForce(transform.forward*5f);
             /* var newVelocity = new Vector3(0f , 0f, 1f).normalized * _flySpeed;
             newVelocity = transform.TransformVector(newVelocity);
             _rb.velocity = newVelocity;*/
         }
 
-        _rb.AddRelativeForce(transform.forward*_xInput*5f);
-
-        //transform.Rotate(new Vector3(_xInput, 0f, 0f));
+        if (_gliding) 
+        {
+            Vector3 force = Vector3.up * Physics.gravity.y;
+            _rb.AddForceAtPosition(force, transform.position);
+        }
         
-        //_birdCamera.transform.Rotate(new Vector3(0f,_yInput,0f));
+        //_rb.AddForce(transform.forward*_xInput*5f);
+
+
+        Debug.Log(_xInput);
+        
+        if (_xInput <= 0) {
+            
+            transform.Rotate(new Vector3(_xInput, 0f, 0f));
+        }
+        
         transform.Rotate(new Vector3(0f,_yInput,0f));
+        //_birdCamera.transform.Rotate(new Vector3(1.26f,0f,0f));
     }
+
 }
