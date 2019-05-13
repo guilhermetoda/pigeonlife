@@ -20,13 +20,25 @@ public class Flying : MonoBehaviour
 
     private bool _gliding = false;
 
+    private bool _isGrounded = false; // is the player grounded?
+
     [SerializeField] private Camera _birdCamera;
+
+    [Header("Ground Check")]
+    [SerializeField] private float _groundCheckDistance = 3f; // Distance from the character to the ground
+    [SerializeField] private LayerMask _groundMask; // layers that represent the ground
+
 
     [Header("Camera")]
     [SerializeField] private Transform _camPivot;
     private Transform _camTransform;
 
     private float _CurrentAngle = 0f;
+
+    public Rigidbody plane;
+	public float maxSpeed = 20f;
+	public float acceleration = 5f;
+	public float speed = 0f;
 
     private void Awake()
     {
@@ -37,13 +49,54 @@ public class Flying : MonoBehaviour
     private void FixedUpdate()
     {
         FlyingPhysics();
+        Vector3 targetVelocity = transform.forward * speed;
+		plane.AddForceAtPosition (targetVelocity,transform.position);
     }
 
     private void Update()
     {
+        _isGrounded = GroundCheck();
         ReadInputs();
         UpdateRotations();
+        if (!_isGrounded) 
+        {
+            float changeInVelocity = Input.GetAxis ("Vertical") * acceleration * Time.deltaTime;
+		    speed = Mathf.Clamp (speed + changeInVelocity,0f,maxSpeed);
+        }
+        else 
+        {
+            speed = 0f;
+        }
     }
+
+     // checks for the ground
+    private bool GroundCheck()
+    {
+        // origin of the raycast
+        Vector3 originLeft = transform.position + new Vector3(-0.4f, 0.2f, 0f);
+        Vector3 originRight = transform.position + new Vector3(0.4f, 0.2f, 0f);
+        // perform raycast
+        bool raycastLeft = Physics.Raycast(originLeft, -Vector3.up, _groundCheckDistance, _groundMask);
+        bool raycastRight = Physics.Raycast(originRight, -Vector3.up, _groundCheckDistance, _groundMask);
+        if(raycastLeft || raycastRight)
+        {
+            // debug raycast hit
+            Debug.DrawRay(originLeft, -Vector3.up * _groundCheckDistance, Color.green);
+            Debug.DrawRay(originRight, -Vector3.up * _groundCheckDistance, Color.green);
+            // return success
+            //Debug.Log("GROUND");
+            return true;
+        }
+
+        // raycast failed
+        // debug raycast miss
+        Debug.DrawRay(originLeft, -Vector3.up * _groundCheckDistance, Color.red);
+        Debug.DrawRay(originRight, -Vector3.up * _groundCheckDistance, Color.red);
+        //Debug.Log("NOT GROUND");
+        // return failure
+        return false;
+    }
+
 
     // Update Camera Rotation
     private void UpdateRotations()
@@ -134,7 +187,7 @@ public class Flying : MonoBehaviour
         
         if (_xInput <= 0) {
             
-            transform.Rotate(new Vector3(_xInput, 0f, 0f));
+            //transform.Rotate(new Vector3(_xInput, 0f, 0f));
         }
         
         transform.Rotate(new Vector3(0f,_yInput,0f));
