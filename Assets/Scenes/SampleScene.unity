@@ -1927,7 +1927,7 @@ MonoBehaviour:
     m_Bits: 512
   _camPivot: {fileID: 1167747824}
   plane: {fileID: 1341617578}
-  maxSpeed: 20
+  maxSpeed: 10
   acceleration: 5
   speed: 0
 --- !u!4 &1341617581 stripped
