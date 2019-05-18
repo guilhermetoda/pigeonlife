@@ -8,6 +8,7 @@ public class Flying : MonoBehaviour
     private Rigidbody _rb;
     
     [SerializeField] private float _flyForce = 10f;
+    [SerializeField] private float _rotationSpeed = 10f;
     private float _flyForwardForce = 10f;
 
     private float _xInput = 0f; // X-Axis Input 
@@ -49,8 +50,13 @@ public class Flying : MonoBehaviour
     private void FixedUpdate()
     {
         FlyingPhysics();
+
         Vector3 targetVelocity = transform.forward * speed;
 		plane.AddForceAtPosition (targetVelocity,transform.position);
+        if (_isGrounded) 
+        {
+            MovingPhysics();
+        }
     }
 
     private void Update()
@@ -103,9 +109,22 @@ public class Flying : MonoBehaviour
     {
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
-        
-        transform.Rotate(0f, mouseX, 0f);
 
+        float leftTrigger = Input.GetAxis("LeftTrigger");
+        float rightTrigger = Input.GetAxis("RightTrigger");
+
+
+        
+        // // Rotate around our y-axis
+        // transform.Rotate(new Vector3(0f,_yInput,0f));
+        // if (_yInput == 0) 
+        // {
+        //     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(45f*leftTrigger,transform.rotation.y,transform.rotation.z), Time.deltaTime*speed);
+        // }
+        
+        //transform.Rotate(0f, mouseX, 0f);
+
+        transform.Rotate(new Vector3(0f,_yInput,0f));
         // increase the angle using the Input from the Mouse
         _CurrentAngle += mouseY;
         // Checks if the angle is between 90f and -90f
@@ -127,6 +146,7 @@ public class Flying : MonoBehaviour
         _xInput = Input.GetAxis("Vertical");
         _yInput = Input.GetAxis("Horizontal");
 
+        
          if (Input.GetButtonDown("Jump")) 
         {
            _flyPressed = true;
@@ -154,6 +174,21 @@ public class Flying : MonoBehaviour
         }
     }
 
+    private void MovingPhysics() 
+    {
+        Vector3 vec;
+        vec.x = _xInput;
+        vec.z = _yInput;
+        vec = Camera.main.transform.TransformDirection(vec.x, 0f, vec.z);  // Make relative to main camera
+        vec.y = 0;  // optional for no y movement.
+        Vector3 force = vec.normalized * 10f;
+        _rb.AddForce(force);
+
+/*      var newVelocity = transform.forward * _flySpeed*_xInput;
+        newVelocity = transform.TransformVector(newVelocity);
+        _rb.velocity = newVelocity; */
+    }
+
 
     private void FlyingPhysics() 
     {
@@ -176,21 +211,20 @@ public class Flying : MonoBehaviour
 
         if (_gliding) 
         {
-            Vector3 force = Vector3.up * Physics.gravity.y;
-            _rb.AddForceAtPosition(force, transform.position);
+            _rb.AddForce(Vector3.forward * _flySpeed*2f, ForceMode.Acceleration);
         }
         
         //_rb.AddForce(transform.forward*_xInput*5f);
 
 
-        Debug.Log(_xInput);
+        
         
         if (_xInput <= 0) {
             
             //transform.Rotate(new Vector3(_xInput, 0f, 0f));
         }
         
-        transform.Rotate(new Vector3(0f,_yInput,0f));
+
         //_birdCamera.transform.Rotate(new Vector3(1.26f,0f,0f));
     }
 
