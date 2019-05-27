@@ -99,9 +99,11 @@ public class Flying : MonoBehaviour
         {
             float changeInVelocity = Input.GetAxis ("Vertical") * acceleration * Time.deltaTime;
 		    speed = Mathf.Clamp (speed + changeInVelocity,0f,maxSpeed);
+            _birdCamera.fieldOfView = 60f;
         }
         else 
         {
+            _birdCamera.fieldOfView = 30f;
             speed = 0f;
         }
 
