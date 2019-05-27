@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Item
+  - EnvItem
   layers:
   - Default
   - TransparentFX
@@ -16,9 +18,9 @@ TagManager:
   - PostProcessing
   - Floor
   - Building
-  - 
-  - 
-  - 
+  - Target
+  - Item
+  - Player
   - 
   - 
   - 

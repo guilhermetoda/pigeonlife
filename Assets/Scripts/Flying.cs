@@ -7,12 +7,25 @@ public class Flying : MonoBehaviour
 {
     private Rigidbody _rb;
     
+
+    [SerializeField] private Transform _triggerPos;
+    // Range of X-Axis of the overlap box
+    [SerializeField] private float _triggerBoxX;
+    // Range of Y-Axis of the overlap box
+    [SerializeField] private float _triggerBoxY;
+    // Range of Z-Axis of the overlap box
+    [SerializeField] private float _triggerBoxZ;
+
+    [SerializeField] private LayerMask _itemLayers;
+
+
     [SerializeField] private float _flyForce = 10f;
     [SerializeField] private float _rotationSpeed = 10f;
     private float _flyForwardForce = 10f;
 
     private float _xInput = 0f; // X-Axis Input 
     private float _yInput = 0f; // Y-Axis Input 
+    private float _leftTrigger = 0f; // Left trigger axis
 
     private float _flySpeed = 0.5f;
 
@@ -20,6 +33,10 @@ public class Flying : MonoBehaviour
     private bool _flyHold = false;
 
     private bool _gliding = false;
+
+    private float _gravity = 9.8f;
+    [SerializeField] private float _gravityScale = 9.8f;
+    private float _earthGravity = 9.8f;
 
     private bool _isGrounded = false; // is the player grounded?
 
@@ -41,22 +58,36 @@ public class Flying : MonoBehaviour
 	public float acceleration = 5f;
 	public float speed = 0f;
 
+    public bool _hasItem = false;
+
+    private GameObject _holdingObject;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _camTransform = _camPivot.GetComponentInChildren<Camera>().transform;
     }
 
+    private void ApplyGravity() 
+    {
+       
+        //Vector3 gravity = -Vector3.up * _gravity * Time.deltaTime;
+        Vector3 gravity = -Vector3.up * _gravity;
+        _rb.AddForce(gravity);
+        Debug.Log("Gravity Applied: "+gravity);
+    }
+
     private void FixedUpdate()
     {
         FlyingPhysics();
-
+        
         Vector3 targetVelocity = transform.forward * speed;
 		plane.AddForceAtPosition (targetVelocity,transform.position);
         if (_isGrounded) 
         {
             MovingPhysics();
         }
+        ApplyGravity();
     }
 
     private void Update()
@@ -73,6 +104,8 @@ public class Flying : MonoBehaviour
         {
             speed = 0f;
         }
+
+        
     }
 
      // checks for the ground
@@ -110,7 +143,7 @@ public class Flying : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        float leftTrigger = Input.GetAxis("LeftTrigger");
+        
         float rightTrigger = Input.GetAxis("RightTrigger");
 
 
@@ -145,7 +178,20 @@ public class Flying : MonoBehaviour
     {
         _xInput = Input.GetAxis("Vertical");
         _yInput = Input.GetAxis("Horizontal");
+        _leftTrigger = Input.GetAxis("LeftTrigger");
 
+        Debug.Log("Left trigger input:" +_leftTrigger);
+
+        if (_leftTrigger > 0) 
+        {
+            _gravity = _earthGravity * _leftTrigger * _gravityScale;
+
+            
+        } 
+        else 
+        {
+            _gravity = _earthGravity;
+        }
         
          if (Input.GetButtonDown("Jump")) 
         {
@@ -172,6 +218,33 @@ public class Flying : MonoBehaviour
         {
             _gliding = false;
         }
+
+        if (Input.GetButtonDown("Fire3")) 
+        {
+            if (_hasItem) 
+            {
+                //Drop Item
+                DropItem();
+            }
+            else 
+            {
+                Debug.Log("Pickup");
+                PickupItem();
+            }
+            
+        }
+    }
+
+    private void DropItem() 
+    {
+        Debug.Log("AAAA");
+        _holdingObject.GetComponent<FollowPlayer>().PickItem(false);
+        _holdingObject.GetComponent<Rigidbody>().detectCollisions = true;
+        _holdingObject.GetComponent<Rigidbody>().useGravity = true;
+        _holdingObject.gameObject.transform.SetParent(null);
+        _holdingObject = null;
+        _hasItem = false;
+
     }
 
     private void MovingPhysics() 
@@ -183,10 +256,17 @@ public class Flying : MonoBehaviour
         vec.y = 0;  // optional for no y movement.
         Vector3 force = vec.normalized * 10f;
         _rb.AddForce(force);
+        Debug.Log("Dustino");
 
 /*      var newVelocity = transform.forward * _flySpeed*_xInput;
         newVelocity = transform.TransformVector(newVelocity);
         _rb.velocity = newVelocity; */
+    }
+
+    public void MakingPigeonFlyUp() 
+    {
+        _rb.AddForce(Vector3.up * 1f, ForceMode.Impulse);
+        Debug.Log("HELLO");
     }
 
 
@@ -227,5 +307,46 @@ public class Flying : MonoBehaviour
 
         //_birdCamera.transform.Rotate(new Vector3(1.26f,0f,0f));
     }
+
+    private void PickupItem(bool drop = false) 
+    {
+        Collider[] colliders = Physics.OverlapBox(_triggerPos.position, new Vector3(_triggerBoxX, _triggerBoxY, _triggerBoxZ), Quaternion.identity, _itemLayers);
+
+        if (colliders.Length > 0) 
+        {
+            
+            for (int i=0; i < colliders.Length; i++) 
+            {
+                if (colliders[i].CompareTag("Item")) 
+                {
+                    colliders[i].gameObject.transform.SetParent(transform);
+                    colliders[i].gameObject.transform.position = _triggerPos.position;
+                    if (!drop) 
+                    {
+                        colliders[i].gameObject.GetComponent<FollowPlayer>().PickItem(true);
+                        colliders[i].gameObject.GetComponent<Rigidbody>().detectCollisions = false;
+                        colliders[i].gameObject.GetComponent<Rigidbody>().useGravity = false;
+                        _hasItem = true;
+                        _holdingObject = colliders[i].gameObject;
+                    }
+                    
+                    break;
+                }
+                else if (colliders[i].CompareTag("EnvItem")) 
+                {
+                    colliders[i].GetComponent<EnvironmentInteractables>().Action(this.gameObject);
+                }
+            }
+        }
+
+    }
+
+    // Debug the Attack Radius
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(_triggerPos.position, new Vector3(_triggerBoxX, _triggerBoxY, _triggerBoxZ));
+    }
+
 
 }

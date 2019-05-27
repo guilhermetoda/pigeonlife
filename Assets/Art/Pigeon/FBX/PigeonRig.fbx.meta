@@ -1,0 +1,165 @@
+fileFormatVersion: 2
+guid: b9f09060c928da440864888c50278991
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: back
+    100002: bust
+    100004: bust_ctrl
+    100006: l_ankle
+    100008: l_elbow
+    100010: l_feet
+    100012: l_hip
+    100014: l_leg
+    100016: l_leggy
+    100018: l_shoulder
+    100020: l_wing
+    100022: l_wingheather
+    100024: master_ctrl
+    100026: neck
+    100028: neck_ctrl
+    100030: pCube11
+    100032: //RootNode
+    100034: r_ankle
+    100036: r_elbow
+    100038: r_feet
+    100040: r_hip
+    100042: r_leg
+    100044: r_leggy
+    100046: r_shoulder
+    100048: r_wing
+    100050: r_wingheather
+    100052: root
+    100054: tail
+    100056: tail_ctrl
+    100058: tiptail
+    100060: tophead
+    100062: wing_elbow_l_ctrl
+    100064: wing_elbow_r_ctrl
+    100066: wing_l_ctrl
+    100068: wing_r_ctrl
+    400000: back
+    400002: bust
+    400004: bust_ctrl
+    400006: l_ankle
+    400008: l_elbow
+    400010: l_feet
+    400012: l_hip
+    400014: l_leg
+    400016: l_leggy
+    400018: l_shoulder
+    400020: l_wing
+    400022: l_wingheather
+    400024: master_ctrl
+    400026: neck
+    400028: neck_ctrl
+    400030: pCube11
+    400032: //RootNode
+    400034: r_ankle
+    400036: r_elbow
+    400038: r_feet
+    400040: r_hip
+    400042: r_leg
+    400044: r_leggy
+    400046: r_shoulder
+    400048: r_wing
+    400050: r_wingheather
+    400052: root
+    400054: tail
+    400056: tail_ctrl
+    400058: tiptail
+    400060: tophead
+    400062: wing_elbow_l_ctrl
+    400064: wing_elbow_r_ctrl
+    400066: wing_l_ctrl
+    400068: wing_r_ctrl
+    2100000: lambert1
+    4300000: pCube11
+    9500000: //RootNode
+    13700000: pCube11
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
