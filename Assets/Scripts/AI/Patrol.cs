@@ -10,6 +10,9 @@
         private int destPoint = 0;
         private NavMeshAgent agent;
 
+    private bool moving;
+    public float enemyWaitTime = 2f;
+
 
         void Start () {
             agent = GetComponent<NavMeshAgent>();
@@ -22,8 +25,14 @@
             GotoNextPoint();
         }
 
+    IEnumerator WaitTime()
+    {
+        moving = false;
+        yield return new WaitForSeconds(enemyWaitTime);
+        moving = true;
+    }
 
-        void GotoNextPoint() {
+    void GotoNextPoint() {
             // Returns if no points have been set up
             if (points.Length == 0)
                 return;

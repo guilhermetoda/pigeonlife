@@ -18,7 +18,10 @@ public class StealthTest : MonoBehaviour {
 	public int edgeResolveIterations;
 	public float edgeDstThreshold;
 
-	public MeshFilter viewMeshFilter;
+    public float _distanceLevel3;
+    public float _distanceLevel2;
+
+    public MeshFilter viewMeshFilter;
 	Mesh viewMesh;
 
 	void Start() {
@@ -52,7 +55,21 @@ public class StealthTest : MonoBehaviour {
 				float dstToTarget = Vector3.Distance (transform.position, target.position);
 				if (!Physics.Raycast (transform.position, dirToTarget, dstToTarget, obstacleMask)) {
 					visibleTargets.Add (target);
-				}
+                    Debug.Log(dstToTarget);
+
+                    if (dstToTarget < _distanceLevel3) 
+                    {
+                        Debug.Log("Game Over - Retry!");
+                    }
+                    else if (dstToTarget < _distanceLevel2) 
+                    {
+                        Debug.Log("Run into Target"); 
+                    }
+                    else
+                    {
+                        Debug.Log("Alert!");
+                    }
+                }
 			}
 		}
 	}
