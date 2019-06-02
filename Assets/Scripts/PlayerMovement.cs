@@ -7,6 +7,8 @@ public class PlayerMovement : MonoBehaviour
     private float _yInput = 0f; // Y-Axis Input 
     private bool _jumpPressed;
     private bool _isGrounded;
+    private bool _isHide = false;
+    private bool _alertMode = false;
 
     [Header("Ground Check")]
     [SerializeField] private float _groundCheckDistance = 3f; // Distance from the character to the ground
@@ -22,6 +24,11 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private LayerMask _itemLayers;
 
+    [SerializeField] private GameObject _pigeonModel;
+    [SerializeField] private GameObject _hideModel;
+
+
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -34,9 +41,21 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Fire3")) 
         {
-            PickupItem();
+            if (!_alertMode)
+            Hide();
         }
     }
+
+    public void SetAlertMode() 
+    {
+        _alertMode = true;
+    }
+
+    public void NotAlert() 
+    {
+        _alertMode = false;
+    }
+
 
     private void Update()
     {
@@ -57,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!_isHide)
         ApplyMovement();
     }
 
@@ -68,6 +88,29 @@ public class PlayerMovement : MonoBehaviour
         newVel.y = _jumpPressed ? 1f : _rb.velocity.y;
         _rb.velocity = newVel;
         transform.Rotate(0f, _yInput, 0f);
+    }
+
+    private void Hide() 
+    {
+        if (!_isHide) 
+        {
+            _pigeonModel.SetActive(false);
+            _hideModel.SetActive(true);
+            _isHide = true;
+            // Be careful with this number
+            gameObject.layer = 16;
+        }
+        else 
+        {
+            
+            _hideModel.SetActive(false);
+            _pigeonModel.SetActive(true);
+            _isHide = false;
+            // Be careful with this number
+            gameObject.layer = 15;
+        }
+
+        
     }
 
      // checks for the ground

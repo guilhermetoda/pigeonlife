@@ -24,11 +24,15 @@ public class StealthTest : MonoBehaviour {
     public MeshFilter viewMeshFilter;
 	Mesh viewMesh;
 
+    private AIMode _aiState;
+    private Patrol _patrolControl;
+
 	void Start() {
 		viewMesh = new Mesh ();
 		viewMesh.name = "View Mesh";
 		viewMeshFilter.mesh = viewMesh;
-
+        _aiState = GetComponent<AIMode>();
+        _patrolControl = GetComponent<Patrol>();
 		StartCoroutine ("FindTargetsWithDelay", .2f);
 	}
 
@@ -48,8 +52,14 @@ public class StealthTest : MonoBehaviour {
 		visibleTargets.Clear ();
 		Collider[] targetsInViewRadius = Physics.OverlapSphere (transform.position, viewRadius, targetMask);
 
+        if (_patrolControl.GetState() == "Run" && targetsInViewRadius.Length ==0) 
+        {
+            _patrolControl.SetState("NoTargetAlert");
+            _patrolControl.NoTargetAlert();
+        }
+
 		for (int i = 0; i < targetsInViewRadius.Length; i++) {
-			Transform target = targetsInViewRadius [i].transform;
+			Transform target = targetsInViewRadius[i].transform;
 			Vector3 dirToTarget = (target.position - transform.position).normalized;
 			if (Vector3.Angle (transform.forward, dirToTarget) < viewAngle / 2) {
 				float dstToTarget = Vector3.Distance (transform.position, target.position);
@@ -60,14 +70,24 @@ public class StealthTest : MonoBehaviour {
                     if (dstToTarget < _distanceLevel3) 
                     {
                         Debug.Log("Game Over - Retry!");
+                        _patrolControl.SetState("Over");
+                        
                     }
-                    else if (dstToTarget < _distanceLevel2) 
+                    /* else if (dstToTarget < _distanceLevel2) 
                     {
                         Debug.Log("Run into Target"); 
+                        _aiState.SetState("Run");
+                        _patrolControl.GoToPlayer(target);
+                    }*/
+                    else if (_patrolControl.GetState() == "Run") 
+                    {
+                        _patrolControl.GoToPlayer(target);
                     }
-                    else
+                    else if (_patrolControl.GetState() != "Run" && _patrolControl.GetState() != "Alert")
                     {
                         Debug.Log("Alert!");
+                        _patrolControl.SetState("Alert");
+                        _patrolControl.Alert(target);
                     }
                 }
 			}
