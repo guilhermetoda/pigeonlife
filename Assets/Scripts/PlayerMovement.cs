@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isGrounded;
     private bool _isHide = false;
     private bool _alertMode = false;
+    private bool _hasItem = false;
 
     [Header("Ground Check")]
     [SerializeField] private float _groundCheckDistance = 3f; // Distance from the character to the ground
@@ -26,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private GameObject _pigeonModel;
     [SerializeField] private GameObject _hideModel;
-
+    [SerializeField] private GameObject _popCornModel;
 
 
     private void Awake()
@@ -41,9 +42,22 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Fire3")) 
         {
-            if (!_alertMode)
-            Hide();
+            if (!_alertMode && _hasItem) 
+            {
+                Hide();
+            }
+            else if (!_hasItem) 
+            {
+                PickupItem();
+            }
+                
         }
+    }
+
+    public void SetItem() 
+    {
+        _popCornModel.gameObject.SetActive(true);
+        _hasItem = true;
     }
 
     public void SetAlertMode() 

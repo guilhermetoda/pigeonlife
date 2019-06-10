@@ -89,7 +89,7 @@ public class Patrol : MonoBehaviour {
         agent.isStopped = false;
         stop = false;
         _followingPlayer = true;
-        SetState("Run");
+        SetState("Chase");
     }
 
     public void Alert(Transform follow) 

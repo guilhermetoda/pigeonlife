@@ -52,7 +52,7 @@ public class StealthTest : MonoBehaviour {
 		visibleTargets.Clear ();
 		Collider[] targetsInViewRadius = Physics.OverlapSphere (transform.position, viewRadius, targetMask);
 
-        if (_patrolControl.GetState() == "Run" && targetsInViewRadius.Length ==0) 
+        if (_patrolControl.GetState() == "Chase" && targetsInViewRadius.Length ==0) 
         {
             _patrolControl.SetState("NoTargetAlert");
             _patrolControl.NoTargetAlert();
@@ -71,6 +71,7 @@ public class StealthTest : MonoBehaviour {
                     {
                         Debug.Log("Game Over - Retry!");
                         _patrolControl.SetState("Over");
+						GameController.gameState = "Over";
                         
                     }
                     /* else if (dstToTarget < _distanceLevel2) 
@@ -79,11 +80,11 @@ public class StealthTest : MonoBehaviour {
                         _aiState.SetState("Run");
                         _patrolControl.GoToPlayer(target);
                     }*/
-                    else if (_patrolControl.GetState() == "Run") 
+                    else if (_patrolControl.GetState() == "Chase") 
                     {
                         _patrolControl.GoToPlayer(target);
                     }
-                    else if (_patrolControl.GetState() != "Run" && _patrolControl.GetState() != "Alert")
+                    else if (_patrolControl.GetState() != "Chase" && _patrolControl.GetState() != "Alert")
                     {
                         Debug.Log("Alert!");
                         _patrolControl.SetState("Alert");
