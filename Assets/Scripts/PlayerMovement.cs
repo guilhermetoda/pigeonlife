@@ -11,6 +11,10 @@ public class PlayerMovement : MonoBehaviour
     private bool _alertMode = false;
     private bool _hasItem = false;
 
+    private bool _drunk = false;
+
+    [SerializeField] Cinemachine.CinemachineVirtualCamera _drunkCamera;
+
     [Header("Ground Check")]
     [SerializeField] private float _groundCheckDistance = 3f; // Distance from the character to the ground
     [SerializeField] private LayerMask _groundMask; // layers that represent the ground
@@ -52,6 +56,19 @@ public class PlayerMovement : MonoBehaviour
             }
                 
         }
+
+        if (Input.GetButtonDown("Fire2")) 
+        {
+            PickupItem();
+            Debug.Log("Here");
+        }
+    }
+
+    public void SetDrunk() 
+    {
+        _drunk = true;
+        _drunkCamera.gameObject.SetActive(true);
+        
     }
 
     public void SetItem() 
@@ -167,8 +184,7 @@ public class PlayerMovement : MonoBehaviour
         Collider[] colliders = Physics.OverlapBox(_triggerPos.position, new Vector3(_triggerBoxX, _triggerBoxY, _triggerBoxZ), Quaternion.identity, _itemLayers);
 
         if (colliders.Length > 0) 
-        {
-            
+        {                                                    
             for (int i=0; i < colliders.Length; i++) 
             {
                 if (colliders[i].CompareTag("EnvItem")) 
